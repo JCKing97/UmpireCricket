@@ -20,6 +20,9 @@ class Game(
 
     fun ballBowled() {
         overs[currentOver].ballBowled()
+        if (overs[currentOver].currentBall >= overs[currentOver].ballLimit) {
+            endOver()
+        }
     }
 
     fun extraBall() {

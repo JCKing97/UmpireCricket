@@ -25,26 +25,26 @@ class OverActivity : AppCompatActivity() {
     private fun ballBowled() {
         val game = intent.getSerializableExtra("game") as Game
         game.ballBowled()
-        updateBallCountAndLimitText()
+        updateDisplayText()
     }
 
     private fun extraBall() {
         val game = intent.getSerializableExtra("game") as Game
         game.extraBall()
-        updateBallCountAndLimitText()
+        updateDisplayText()
     }
 
-    private fun updateBallCountAndLimitText() {
+    private fun updateDisplayText() {
         val game = intent.getSerializableExtra("game") as Game
         val ballCountText = findViewById<TextView>(R.id.ballCount)
         ballCountText.text = "${game.getCurrentBall()} / ${game.getBallLimit()}"
+        val overCountText = findViewById<TextView>(R.id.oversCountText)
+        overCountText.text = "Overs: ${game.getOverCount()}"
     }
 
     private fun endOver() {
         val game = intent.getSerializableExtra("game") as Game
         game.endOver()
-        val overCountText = findViewById<TextView>(R.id.oversCountText)
-        overCountText.text = "Overs: ${game.getOverCount()}"
-        updateBallCountAndLimitText()
+        updateDisplayText()
     }
 }
