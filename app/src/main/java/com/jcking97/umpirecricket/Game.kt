@@ -47,7 +47,7 @@ class Game(
     }
 
     fun getOverCount(): Int {
-        return overs.size
+        return currentOver
     }
 
 }
