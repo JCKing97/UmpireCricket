@@ -4,6 +4,7 @@ import org.junit.Test
 import org.junit.Before
 
 import org.junit.Assert.*
+import java.lang.Integer.min
 
 /**
  * Tests for the Over class.
@@ -32,6 +33,35 @@ class OverTest {
             over.extraBall()
             assertEquals(i, over.currentBall)
             assertEquals(6+i, over.ballLimit)
+        }
+    }
+
+    @Test
+    fun whenBallBowledReachesLimitThenBallsBowledDoesNotIncreaseAndLimitDoesNotIncrease() {
+        for (i in 1..10) {
+            over.ballBowled()
+            assertEquals(min(i, 6), over.currentBall)
+            assertEquals(6, over.ballLimit)
+        }
+    }
+
+    @Test
+    fun whenExtraBallsAndBallsBowledThenNewLimitIsRespected() {
+        val extraBalls: Int = 3
+        for (i in 1..extraBalls) {
+            over.extraBall()
+            assertEquals(i, over.currentBall)
+            assertEquals(6+i, over.ballLimit)
+        }
+        for (i in 1..6) {
+            over.ballBowled()
+            assertEquals(i+extraBalls, over.currentBall)
+            assertEquals(6+extraBalls, over.ballLimit)
+        }
+        for (i in 1..3) {
+            over.ballBowled()
+            assertEquals(6+extraBalls, over.currentBall)
+            assertEquals(6+extraBalls, over.ballLimit)
         }
     }
 }
