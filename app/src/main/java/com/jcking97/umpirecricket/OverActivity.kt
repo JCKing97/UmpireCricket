@@ -37,16 +37,14 @@ class OverActivity : AppCompatActivity() {
     private fun updateBallCountAndLimitText() {
         val game = intent.getSerializableExtra("game") as Game
         val ballCountText = findViewById<TextView>(R.id.ballCount)
-        ballCountText.text = game.getCurrentBall().toString()
-        val ballLimitText = findViewById<TextView>(R.id.ballLimitText)
-        ballLimitText.text = game.getBallLimit().toString()
+        ballCountText.text = "${game.getCurrentBall()} / ${game.getBallLimit()}"
     }
 
     private fun endOver() {
         val game = intent.getSerializableExtra("game") as Game
         game.endOver()
         val overCountText = findViewById<TextView>(R.id.oversCountText)
-        overCountText.text = game.getOverCount().toString()
+        overCountText.text = "Overs: ${game.getOverCount()}"
         updateBallCountAndLimitText()
     }
 }
