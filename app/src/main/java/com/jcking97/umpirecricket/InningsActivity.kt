@@ -37,9 +37,9 @@ class InningsActivity : AppCompatActivity() {
     private fun updateDisplayText() {
         val innings = intent.getSerializableExtra("innings") as Innings
         val ballCountText = findViewById<TextView>(R.id.ballCount)
-        ballCountText.text = "${innings.getCurrentBall()} / ${innings.getBallLimit()}"
+        ballCountText.text = "${innings.getBallsBowled()} / ${innings.getBallLimit()}"
         val overCountText = findViewById<TextView>(R.id.oversCountText)
-        overCountText.text = "Overs: ${innings.getOverCount()}"
+        overCountText.text = "Overs: ${innings.getOversBowled()}"
     }
 
     private fun endOver() {

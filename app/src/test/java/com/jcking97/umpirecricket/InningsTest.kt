@@ -20,8 +20,8 @@ class InningsTest {
     @Test
     fun whenNewInningsThenOversSetAndBallsSetAndLimitSet() {
         assertEquals(6, innings.getBallLimit())
-        assertEquals(0, innings.getCurrentBall())
-        assertEquals(0, innings.getOverCount())
+        assertEquals(0, innings.getBallsBowled())
+        assertEquals(0, innings.getOversBowled())
     }
 
     @Test
@@ -29,14 +29,14 @@ class InningsTest {
         for (over in 1..3) {
             for (ball in 1..5) {
                 innings.ballBowled()
-                assertEquals(ball, innings.getCurrentBall())
+                assertEquals(ball, innings.getBallsBowled())
                 assertEquals(6, innings.getBallLimit())
-                assertEquals(over-1, innings.getOverCount())
+                assertEquals(over-1, innings.getOversBowled())
             }
             innings.ballBowled()
-            assertEquals(0, innings.getCurrentBall())
+            assertEquals(0, innings.getBallsBowled())
             assertEquals(6, innings.getBallLimit())
-            assertEquals(over, innings.getOverCount())
+            assertEquals(over, innings.getOversBowled())
         }
     }
 
@@ -44,9 +44,9 @@ class InningsTest {
     fun whenExtraBallsThenBallLimitIncreasedAndCurrentBallIncreasedAndOverNotIncreased() {
         for (ball in 1..12) {
             innings.extraBall()
-            assertEquals(ball, innings.getCurrentBall())
+            assertEquals(ball, innings.getBallsBowled())
             assertEquals(ball+6, innings.getBallLimit())
-            assertEquals(0, innings.getOverCount())
+            assertEquals(0, innings.getOversBowled())
         }
     }
 
@@ -56,20 +56,20 @@ class InningsTest {
         for (over in 1..3) {
             for (extraBall in 1..extraBalls) {
                 innings.extraBall()
-                assertEquals(extraBall, innings.getCurrentBall())
+                assertEquals(extraBall, innings.getBallsBowled())
                 assertEquals(extraBall+6, innings.getBallLimit())
-                assertEquals(over-1, innings.getOverCount())
+                assertEquals(over-1, innings.getOversBowled())
             }
             for (ball in 1..5) {
                 innings.ballBowled()
-                assertEquals(extraBalls+ball, innings.getCurrentBall())
+                assertEquals(extraBalls+ball, innings.getBallsBowled())
                 assertEquals(extraBalls+6, innings.getBallLimit())
-                assertEquals(over-1, innings.getOverCount())
+                assertEquals(over-1, innings.getOversBowled())
             }
             innings.ballBowled()
-            assertEquals(0, innings.getCurrentBall())
+            assertEquals(0, innings.getBallsBowled())
             assertEquals(6, innings.getBallLimit())
-            assertEquals(over, innings.getOverCount())
+            assertEquals(over, innings.getOversBowled())
         }
     }
 
@@ -77,9 +77,9 @@ class InningsTest {
     fun whenEndOverThenOversIncreased() {
         for (over in 1..12) {
             innings.endOver()
-            assertEquals(0, innings.getCurrentBall())
+            assertEquals(0, innings.getBallsBowled())
             assertEquals(6, innings.getBallLimit())
-            assertEquals(over, innings.getOverCount())
+            assertEquals(over, innings.getOversBowled())
         }
     }
 
