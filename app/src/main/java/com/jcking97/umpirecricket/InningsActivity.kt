@@ -5,12 +5,12 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 
-class OverActivity : AppCompatActivity() {
+class InningsActivity : AppCompatActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_over)
+        setContentView(R.layout.activity_innings)
 
         val ballBowledButton = findViewById<Button>(R.id.ballBowledButton)
         ballBowledButton.setOnClickListener{ ballBowled() }
@@ -23,28 +23,28 @@ class OverActivity : AppCompatActivity() {
     }
 
     private fun ballBowled() {
-        val game = intent.getSerializableExtra("game") as Game
-        game.ballBowled()
+        val innings = intent.getSerializableExtra("innings") as Innings
+        innings.ballBowled()
         updateDisplayText()
     }
 
     private fun extraBall() {
-        val game = intent.getSerializableExtra("game") as Game
-        game.extraBall()
+        val innings = intent.getSerializableExtra("innings") as Innings
+        innings.extraBall()
         updateDisplayText()
     }
 
     private fun updateDisplayText() {
-        val game = intent.getSerializableExtra("game") as Game
+        val innings = intent.getSerializableExtra("innings") as Innings
         val ballCountText = findViewById<TextView>(R.id.ballCount)
-        ballCountText.text = "${game.getCurrentBall()} / ${game.getBallLimit()}"
+        ballCountText.text = "${innings.getCurrentBall()} / ${innings.getBallLimit()}"
         val overCountText = findViewById<TextView>(R.id.oversCountText)
-        overCountText.text = "Overs: ${game.getOverCount()}"
+        overCountText.text = "Overs: ${innings.getOverCount()}"
     }
 
     private fun endOver() {
-        val game = intent.getSerializableExtra("game") as Game
-        game.endOver()
+        val innings = intent.getSerializableExtra("innings") as Innings
+        innings.endOver()
         updateDisplayText()
     }
 }
