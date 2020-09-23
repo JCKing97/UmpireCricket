@@ -22,11 +22,26 @@ class Over(var ballsBowled: Int = 0, var ballLimit: Int = 6): Serializable {
     }
 
     /**
+     * Undo a ball being bowled.
+     */
+    fun undoBallBowled() {
+        ballsBowled--
+    }
+
+    /**
      * A no-ball, wide or other event has occurred that causes an extra
      * ball to be bowled in the over. As such increase the ball limit for this over.
      */
     fun extraBall() {
         ballLimit++
         ballBowled()
+    }
+
+    /**
+     * Undo an extra ball.
+     */
+    fun undoExtraBall() {
+        ballLimit--
+        undoBallBowled()
     }
 }
