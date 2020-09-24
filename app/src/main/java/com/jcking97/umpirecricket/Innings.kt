@@ -5,6 +5,7 @@ import android.util.Log
 import org.json.JSONArray
 import java.io.*
 import java.util.*
+import kotlin.NoSuchElementException
 
 /**
  * An innings where one team bats and one team bowls.
@@ -130,7 +131,7 @@ class Innings private constructor(
                     EventType.OVER_BOWLED -> undoEndOver()
                 }
             } while (event.causedByPreviousEvent)
-        } catch(e: EmptyStackException) {
+        } catch(e: NoSuchElementException) {
             // No action to undo so do nothing
         }
     }
