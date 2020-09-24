@@ -1,6 +1,9 @@
 package com.jcking97.umpirecricket
 
-import java.io.Serializable
+import android.content.Context
+import android.util.Log
+import org.json.JSONArray
+import java.io.*
 import java.util.*
 
 /**
@@ -14,17 +17,40 @@ import java.util.*
 class Innings private constructor(
     private var oversBowled: Int = 0,
     private val overs: MutableList<Over> = mutableListOf(Over()),
-    private val eventStack: Stack<Event> = Stack<Event>()): Serializable {
+    private val eventStack: LinkedList<Event> = LinkedList<Event>()): Serializable {
 
     /**
      * Enable the creation of innings
      */
     companion object {
 
+        private const val filename: String = "innings.json"
+
         /**
          * Reload an innings from the last saved file.
          */
-        fun fromFile(): Innings {
+        fun fromFile(context: Context): Innings {
+            val file = File(context.filesDir, filename)
+            if (file.exists()) {
+                FileReader(file).use {
+                    // Retrieve JSON list of events
+                    val jsonArray = JSONArray(it.readText())
+                    val innings = Innings()
+                    // Loop through events (stack built in reverse, so read in reverse)
+                    for (i in jsonArray.length() - 1 downTo 0) {
+                        val event = Event.fromJson(jsonArray.getJSONObject(i))
+                        // Recreate event
+                        if (!event.causedByPreviousEvent) {
+                            when (event.eventType) {
+                                EventType.BALL_BOWLED -> innings.ballBowled()
+                                EventType.EXTRA_BALL -> innings.extraBall()
+                                EventType.OVER_BOWLED -> innings.endOver()
+                            }
+                        }
+                    }
+                    return innings
+                }
+            }
             return Innings()
         }
 
@@ -94,8 +120,10 @@ class Innings private constructor(
      */
     fun undoLastAction() {
         try {
+            // Undo one event and any that caused that and prior events
             do {
-                var event: Event = eventStack.pop()
+                // Pop last event and execute inverse
+                val event: Event = eventStack.pop()
                 when (event.eventType) {
                     EventType.BALL_BOWLED -> undoBallBowled()
                     EventType.EXTRA_BALL -> undoExtraBall()
@@ -126,6 +154,27 @@ class Innings private constructor(
      */
     fun getOversBowled(): Int {
         return oversBowled
+    }
+
+    /**
+     * Write the innings to file for data persistence.
+     * Write json as a list of events that have happened so far in the game.
+     */
+    fun writeToFile(context: Context) {
+        // Generate json events
+        val jsonArray = JSONArray()
+        eventStack.forEach {
+            jsonArray.put(it.toJson())
+        }
+        // Write json to file
+        val file = File(context.filesDir, filename)
+        FileWriter(file).use {
+            try {
+                it.write(jsonArray.toString())
+            } catch (e: IOException) {
+                Log.e("innings.writeToFile", "Failed to write to file", e)
+            }
+        }
     }
 
 }

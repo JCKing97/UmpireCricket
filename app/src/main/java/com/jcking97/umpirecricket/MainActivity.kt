@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
 
-    var innings = Innings.newInnings()
+    private var innings = Innings.newInnings()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun continueInnings() {
         val intent = Intent(this, InningsActivity::class.java)
-        innings = Innings.fromFile()
+        innings = Innings.fromFile(applicationContext)
         intent.putExtra("innings", innings)
         startActivity(intent)
     }
