@@ -102,7 +102,14 @@ class Innings private constructor(
     /**
      * End the current over and create a new one.
      */
-    fun endOver(causedByPreviousEvent: Boolean = false) {
+    fun endOver() {
+        endOver(causedByPreviousEvent = false)
+    }
+
+    /**
+     * End the current over
+     */
+    private fun endOver(causedByPreviousEvent: Boolean = false) {
         oversBowled++
         overs.add(Over())
         eventStack.push(Event(EventType.OVER_BOWLED, causedByPreviousEvent))
