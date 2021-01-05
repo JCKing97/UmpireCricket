@@ -11,13 +11,15 @@ import kotlin.NoSuchElementException
  * An innings where one team bats and one team bowls.
  * In our case this consists of a number of overs.
  *
+ * @property bowlers The bowlers.
  * @property oversBowled The number of overs bowled so far in the innings.
  * @property overs A list of overs bowled in order that they have been bowled.
  * @property eventStack A stack of all the events e.g. balls and overs bowled that have happened
  */
 class Innings private constructor(
+    var bowlers: Array<String> = Array(11) {"Bowler ${it+1}"},
     private var oversBowled: Int = 0,
-    private val overs: MutableList<Over> = mutableListOf(Over()),
+    val overs: MutableList<Over> = mutableListOf(Over()),
     private val eventStack: LinkedList<Event> = LinkedList<Event>()): Serializable {
 
     /**
@@ -67,13 +69,17 @@ class Innings private constructor(
     /**
      * A ball has been bowled in the current over. Add to the balls bowled and if this
      * equals or exceeds the ball limit end the over.
+     *
+     * @return Whether the over has ended or not
      */
-    fun ballBowled() {
+    fun ballBowled(): Boolean {
         overs[oversBowled].ballBowled()
         eventStack.push(Event(EventType.BALL_BOWLED))
         if (overs[oversBowled].ballsBowled >= overs[oversBowled].ballLimit) {
             endOver(causedByPreviousEvent = true)
+            return false
         }
+        return true
     }
 
     /**
@@ -86,10 +92,13 @@ class Innings private constructor(
     /**
      * A wide, no-ball or other event has occurred to require an extra ball in the current over.
      * Increase the ball limit and add to the balls bowled.
+     *
+     * @return Whether the over has ended or not
      */
-    fun extraBall() {
+    fun extraBall(): Boolean {
         overs[oversBowled].extraBall()
         eventStack.push(Event(EventType.EXTRA_BALL))
+        return false
     }
 
     /**
@@ -101,9 +110,12 @@ class Innings private constructor(
 
     /**
      * End the current over and create a new one.
+     *
+     * @return Whether the over has ended or not
      */
-    fun endOver() {
+    fun endOver(): Boolean {
         endOver(causedByPreviousEvent = false)
+        return true
     }
 
     /**
@@ -125,8 +137,10 @@ class Innings private constructor(
 
     /**
      * Undo the last event e.g. ball bowled, over bowled, extra ball.
+     *
+     * @return Whether the over has ended or not
      */
-    fun undoLastAction() {
+    fun undoLastAction(): Boolean {
         try {
             // Undo one event and any that caused that and prior events
             do {
@@ -141,6 +155,7 @@ class Innings private constructor(
         } catch(e: NoSuchElementException) {
             // No action to undo so do nothing
         }
+        return false
     }
 
     /**

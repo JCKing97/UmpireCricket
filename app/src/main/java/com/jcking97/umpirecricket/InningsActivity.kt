@@ -1,6 +1,7 @@
 package com.jcking97.umpirecricket
 
 import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
@@ -29,10 +30,13 @@ class InningsActivity : AppCompatActivity() {
         updateDisplayText()
     }
 
-    private fun inningsAction(innings: Innings, action: () -> Unit ) {
-        action()
+    private fun inningsAction(innings: Innings, action: () -> Boolean ) {
+        val overEnded = action()
         updateDisplayText()
         innings.writeToFile(applicationContext)
+        if (overEnded) {
+            selectBowler(innings)
+        }
     }
 
     private fun updateDisplayText() {
@@ -42,4 +46,16 @@ class InningsActivity : AppCompatActivity() {
         val overCountText = findViewById<TextView>(R.id.oversCountText)
         overCountText.text = "Overs: ${innings.getOversBowled()}"
     }
+
+    /**
+     * Allow the user to select the next over's bowler.
+     */
+    private fun selectBowler(innings: Innings) {
+        val intent = Intent(this, BowlerActivity::class.java)
+        intent.putExtra("bowlers", innings.bowlers)
+        intent.putExtra("lastOverBowler", innings.overs.last().bowlerIndex)
+        intent.putExtra("newOverBowler", 2)
+        startActivity(intent)
+    }
+
 }
