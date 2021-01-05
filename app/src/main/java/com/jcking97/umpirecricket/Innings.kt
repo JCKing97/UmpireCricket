@@ -3,8 +3,8 @@ package com.jcking97.umpirecricket
 import java.io.Serializable
 
 class Innings(
-    var currentOver: Int = 0,
-    val overs: MutableList<Over> = mutableListOf(Over())): Serializable {
+    private var currentOver: Int = 0,
+    private val overs: MutableList<Over> = mutableListOf(Over())): Serializable {
 
     companion object {
 
@@ -31,10 +31,6 @@ class Innings(
 
     fun endOver() {
         currentOver++
-        newOver()
-    }
-
-    fun newOver() {
         overs.add(Over())
     }
 
