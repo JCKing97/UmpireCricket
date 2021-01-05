@@ -12,41 +12,27 @@ class InningsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_innings)
 
+        val innings = intent.getSerializableExtra("innings") as Innings
+
         val ballBowledButton = findViewById<Button>(R.id.ballBowledButton)
-        ballBowledButton.setOnClickListener{ ballBowled() }
+        ballBowledButton.setOnClickListener{ inningsAction(innings) { innings.ballBowled() } }
 
         val extraBallButton = findViewById<Button>(R.id.extraBallButton)
-        extraBallButton.setOnClickListener{ extraBall() }
+        extraBallButton.setOnClickListener{ inningsAction(innings) { innings.extraBall() } }
 
         val endOverButton = findViewById<Button>(R.id.endOverButton)
-        endOverButton.setOnClickListener{ endOver() }
+        endOverButton.setOnClickListener{ inningsAction(innings) { innings.endOver() } }
 
         val undoLastActionButton = findViewById<Button>(R.id.undoButton)
-        undoLastActionButton.setOnClickListener{ undoLastAction() }
-    }
+        undoLastActionButton.setOnClickListener{ inningsAction(innings) { innings.undoLastAction() } }
 
-    private fun ballBowled() {
-        val innings = intent.getSerializableExtra("innings") as Innings
-        innings.ballBowled()
         updateDisplayText()
     }
 
-    private fun extraBall() {
-        val innings = intent.getSerializableExtra("innings") as Innings
-        innings.extraBall()
+    private fun inningsAction(innings: Innings, action: () -> Unit ) {
+        action()
         updateDisplayText()
-    }
-
-    private fun endOver() {
-        val innings = intent.getSerializableExtra("innings") as Innings
-        innings.endOver()
-        updateDisplayText()
-    }
-
-    private fun undoLastAction() {
-        val innings = intent.getSerializableExtra("innings") as Innings
-        innings.undoLastAction()
-        updateDisplayText()
+        innings.writeToFile(applicationContext)
     }
 
     private fun updateDisplayText() {
