@@ -22,7 +22,7 @@ class OverTest {
     fun whenBallsBowledThenCurrentBallIncreasesAndBallLimitDoesNot() {
         for (i in 1..3) {
             over.ballBowled()
-            assertEquals(i, over.currentBall)
+            assertEquals(i, over.ballsBowled)
             assertEquals(6, over.ballLimit)
         }
     }
@@ -31,7 +31,7 @@ class OverTest {
     fun whenExtraBallThenCurrentBallIncreasesAndBallLimitIncreases() {
         for (i in 1..3) {
             over.extraBall()
-            assertEquals(i, over.currentBall)
+            assertEquals(i, over.ballsBowled)
             assertEquals(6+i, over.ballLimit)
         }
     }
@@ -40,7 +40,7 @@ class OverTest {
     fun whenBallBowledReachesLimitThenBallsBowledDoesNotIncreaseAndLimitDoesNotIncrease() {
         for (i in 1..10) {
             over.ballBowled()
-            assertEquals(min(i, 6), over.currentBall)
+            assertEquals(min(i, 6), over.ballsBowled)
             assertEquals(6, over.ballLimit)
         }
     }
@@ -50,17 +50,17 @@ class OverTest {
         val extraBalls: Int = 3
         for (i in 1..extraBalls) {
             over.extraBall()
-            assertEquals(i, over.currentBall)
+            assertEquals(i, over.ballsBowled)
             assertEquals(6+i, over.ballLimit)
         }
         for (i in 1..6) {
             over.ballBowled()
-            assertEquals(i+extraBalls, over.currentBall)
+            assertEquals(i+extraBalls, over.ballsBowled)
             assertEquals(6+extraBalls, over.ballLimit)
         }
         for (i in 1..3) {
             over.ballBowled()
-            assertEquals(6+extraBalls, over.currentBall)
+            assertEquals(6+extraBalls, over.ballsBowled)
             assertEquals(6+extraBalls, over.ballLimit)
         }
     }
