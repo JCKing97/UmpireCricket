@@ -8,31 +8,31 @@ import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
 
-    var game = Game()
+    var innings = Innings()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Set up new and continue game buttons
-        val newGameActivity = findViewById<Button>(R.id.newGameButton)
-        newGameActivity.setOnClickListener{ newGame() }
+        // Set up new and continue innings buttons
+        val newInningsActivity = findViewById<Button>(R.id.newInningsButton)
+        newInningsActivity.setOnClickListener{ newInnings() }
 
-        val continueGameActivity = findViewById<Button>(R.id.continueGameButton)
-        continueGameActivity.setOnClickListener{ continueGame() }
+        val continueInningsActivity = findViewById<Button>(R.id.continueInningsButton)
+        continueInningsActivity.setOnClickListener{ continueInnings() }
     }
 
-    private fun newGame() {
-        val intent = Intent(this, OverActivity::class.java)
-        game = Game.newGame()
-        intent.putExtra("game", game)
+    private fun newInnings() {
+        val intent = Intent(this, InningsActivity::class.java)
+        innings = Innings.newInnings()
+        intent.putExtra("innings", innings)
         startActivity(intent)
     }
 
-    private fun continueGame() {
-        val intent = Intent(this, OverActivity::class.java)
-        game = Game.fromFile()
-        intent.putExtra("game", game)
+    private fun continueInnings() {
+        val intent = Intent(this, InningsActivity::class.java)
+        innings = Innings.fromFile()
+        intent.putExtra("innings", innings)
         startActivity(intent)
     }
 }

@@ -2,18 +2,18 @@ package com.jcking97.umpirecricket
 
 import java.io.Serializable
 
-class Game(
+class Innings(
     var currentOver: Int = 0,
     val overs: MutableList<Over> = mutableListOf(Over())): Serializable {
 
     companion object {
 
-        fun fromFile(): Game {
-            return Game()
+        fun fromFile(): Innings {
+            return Innings()
         }
 
-        fun newGame(): Game {
-            return Game()
+        fun newInnings(): Innings {
+            return Innings()
         }
 
     }
