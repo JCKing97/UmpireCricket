@@ -20,6 +20,9 @@ class InningsActivity : AppCompatActivity() {
 
         val endOverButton = findViewById<Button>(R.id.endOverButton)
         endOverButton.setOnClickListener{ endOver() }
+
+        val undoLastActionButton = findViewById<Button>(R.id.undoButton)
+        undoLastActionButton.setOnClickListener{ undoLastAction() }
     }
 
     private fun ballBowled() {
@@ -34,17 +37,23 @@ class InningsActivity : AppCompatActivity() {
         updateDisplayText()
     }
 
+    private fun endOver() {
+        val innings = intent.getSerializableExtra("innings") as Innings
+        innings.endOver()
+        updateDisplayText()
+    }
+
+    private fun undoLastAction() {
+        val innings = intent.getSerializableExtra("innings") as Innings
+        innings.undoLastAction()
+        updateDisplayText()
+    }
+
     private fun updateDisplayText() {
         val innings = intent.getSerializableExtra("innings") as Innings
         val ballCountText = findViewById<TextView>(R.id.ballCount)
         ballCountText.text = "${innings.getBallsBowled()} / ${innings.getBallLimit()}"
         val overCountText = findViewById<TextView>(R.id.oversCountText)
         overCountText.text = "Overs: ${innings.getOversBowled()}"
-    }
-
-    private fun endOver() {
-        val innings = intent.getSerializableExtra("innings") as Innings
-        innings.endOver()
-        updateDisplayText()
     }
 }

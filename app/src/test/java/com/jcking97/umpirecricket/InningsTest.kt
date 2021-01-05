@@ -52,7 +52,7 @@ class InningsTest {
 
     @Test
     fun whenExtraBallsThenBallLimitIncreasedWhenBallsBowledThenCurrentBallIncreasedAndOverNotIncreasedUntilLimitReached() {
-        val extraBalls: Int = 6
+        val extraBalls = 6
         for (over in 1..3) {
             for (extraBall in 1..extraBalls) {
                 innings.extraBall()

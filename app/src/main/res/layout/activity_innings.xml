@@ -90,5 +90,19 @@
                 tools:layout_editor_absoluteY="538dp" />
         </TableRow>
 
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/undoButton"
+                android:layout_width="251dp"
+                android:layout_height="48dp"
+                android:text="Undo Last Action"
+                tools:layout_editor_absoluteX="110dp"
+                tools:layout_editor_absoluteY="538dp" />
+        </TableRow>
+
     </TableLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
