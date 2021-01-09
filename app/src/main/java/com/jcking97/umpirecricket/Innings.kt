@@ -3,6 +3,7 @@ package com.jcking97.umpirecricket
 import android.content.Context
 import android.util.Log
 import org.json.JSONArray
+import org.json.JSONException
 import java.io.*
 import java.util.*
 import kotlin.NoSuchElementException
@@ -17,10 +18,11 @@ import kotlin.NoSuchElementException
  * @property eventStack A stack of all the events e.g. balls and overs bowled that have happened
  */
 class Innings private constructor(
-    var bowlers: Array<String> = Array(11) {"Bowler ${it+1}"},
+    var bowlers: Array<String> = Array(11) { "Bowler ${it + 1}" },
     private var oversBowled: Int = 0,
     val overs: MutableList<Over> = mutableListOf(Over()),
-    private val eventStack: LinkedList<Event> = LinkedList<Event>()): Serializable {
+    private val eventStack: LinkedList<Event> = LinkedList<Event>()
+): Serializable {
 
     /**
      * Enable the creation of innings
@@ -34,27 +36,38 @@ class Innings private constructor(
          */
         fun fromFile(context: Context): Innings {
             val file = File(context.filesDir, filename)
-            if (file.exists()) {
-                FileReader(file).use {
-                    // Retrieve JSON list of events
-                    val jsonArray = JSONArray(it.readText())
-                    val innings = Innings()
-                    // Loop through events (stack built in reverse, so read in reverse)
-                    for (i in jsonArray.length() - 1 downTo 0) {
-                        val event = Event.fromJson(jsonArray.getJSONObject(i))
-                        // Recreate event
-                        if (!event.causedByPreviousEvent) {
-                            when (event.eventType) {
-                                EventType.BALL_BOWLED -> innings.ballBowledAndEndOverCheck()
-                                EventType.EXTRA_BALL -> innings.extraBall()
-                                EventType.OVER_BOWLED -> innings.endOver()
-                            }
-                        }
-                    }
-                    return innings
-                }
+            return ifFileExistsAndIsValidGetInningsElseGetEmptyInnings(file)
+        }
+
+        private fun ifFileExistsAndIsValidGetInningsElseGetEmptyInnings(file: File): Innings {
+            return try {
+                createInningsFromFile(file)
+            } catch (e: FileNotFoundException) {
+                Log.e(
+                    "Load innings failure",
+                    "File: ${file.absolutePath} not found when trying to load innings"
+                )
+                Innings()
+            } catch (e: JSONException) {
+                Log.e(
+                    "Load innings failure",
+                    "Error with json: ${e.message}"
+                )
+                Innings()
             }
-            return Innings()
+        }
+
+        /**
+         * Read the file and get it's json representation
+         */
+        @Throws(FileNotFoundException::class, JSONException::class)
+        private fun createInningsFromFile(file: File): Innings {
+            FileReader(file).use {
+                val json = JSONArray(it.readText())
+                val innings = Innings()
+                innings.doEventsFromJson(json)
+                return innings
+            }
         }
 
         /**
@@ -163,7 +176,7 @@ class Innings private constructor(
     fun undoLastAction(): Boolean {
         try {
            undoLastActionAndAllThatCausedTheAction()
-        } catch(e: NoSuchElementException) {
+        } catch (e: NoSuchElementException) {
             // No action to undo so do nothing
         }
         return false
@@ -195,6 +208,33 @@ class Innings private constructor(
             EventType.BALL_BOWLED -> undoBallBowled()
             EventType.EXTRA_BALL -> undoExtraBall()
             EventType.OVER_BOWLED -> undoEndOver()
+        }
+    }
+
+    /**
+     * Do the list of events from the given json array.
+     *
+     * @param json The json to get the events to do from.
+     */
+    private fun doEventsFromJson(json: JSONArray) {
+        for (i in json.length() - 1 downTo 0) {
+            val event = Event.fromJson(json.getJSONObject(i))
+            if (!event.causedByPreviousEvent) {
+                doEvent(event)
+            }
+        }
+    }
+
+    /**
+     * Do the event.
+     *
+     * @param event The event to do.
+     */
+    private fun doEvent(event: Event) {
+        when (event.eventType) {
+            EventType.BALL_BOWLED -> ballBowledAndEndOverCheck()
+            EventType.EXTRA_BALL -> extraBall()
+            EventType.OVER_BOWLED -> endOver()
         }
     }
 
