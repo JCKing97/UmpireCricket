@@ -271,16 +271,25 @@ class Innings private constructor(
      * Write json as a list of events that have happened so far in the game.
      */
     fun writeToInningsFile(context: Context) {
-        val json = getInningsEventsAsJson()
-        val file = File(context.filesDir, filename)
-        writeJsonToFile(json, file)
+        try {
+            val json = getInningsEventsAsJson()
+            val file = File(context.filesDir, filename)
+            writeJsonToFile(json, file)
+        } catch (e: JSONException) {
+            Log.e(
+                "Innings to file failure",
+                "Failed to write innings to file (JSONException): ${e.message}"
+            )
+        }
     }
 
     /**
      * Get the events in the innings as an ordered JSONArray.
      *
      * @return The JSONArray of events.
+     * @throws JSONException If fails to create the json array correctly.
      */
+    @Throws(JSONException::class)
     private fun getInningsEventsAsJson(): JSONArray {
         val json = JSONArray()
         eventStack.forEach {
