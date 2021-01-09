@@ -132,7 +132,9 @@ class Innings private constructor(
      */
     private fun undoEndOver() {
         oversBowled--
-        overs.removeLastOrNull()
+        if (overs.isNotEmpty()) {
+            overs.removeAt(overs.lastIndex)
+        }
     }
 
     /**
