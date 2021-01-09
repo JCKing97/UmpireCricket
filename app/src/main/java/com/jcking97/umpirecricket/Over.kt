@@ -20,7 +20,7 @@ class Over(
      * A ball has been bowled increase the count.
      */
     fun ballBowled() {
-        if (ballsBowled < ballLimit) {
+        if (!isBallLimitMetOrExceeded()) {
             ballsBowled++
         }
     }
@@ -47,5 +47,14 @@ class Over(
     fun undoExtraBall() {
         ballLimit--
         undoBallBowled()
+    }
+
+    /**
+     * Has the ball limit been met or exceeded.
+     *
+     * @return true if ball limit met or exceeded, false if not.
+     */
+    fun isBallLimitMetOrExceeded(): Boolean {
+        return ballsBowled >= ballLimit
     }
 }

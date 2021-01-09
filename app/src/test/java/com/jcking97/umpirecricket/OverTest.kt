@@ -64,4 +64,20 @@ class OverTest {
             assertEquals(6+extraBalls, over.ballLimit)
         }
     }
+
+    @Test
+    fun whenBallLimitMetOrExceededThenOverEnded() {
+        for (i in 1..over.ballLimit) {
+            over.ballBowled()
+        }
+        assertTrue(over.isBallLimitMetOrExceeded())
+    }
+
+    @Test
+    fun whenBallLimitNotMetOrExceededThenOverNotEnded() {
+        for (i in 1..over.ballLimit-1) {
+            over.ballBowled()
+            assertFalse(over.isBallLimitMetOrExceeded())
+        }
+    }
 }

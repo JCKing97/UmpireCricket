@@ -45,7 +45,7 @@ class Innings private constructor(
                         // Recreate event
                         if (!event.causedByPreviousEvent) {
                             when (event.eventType) {
-                                EventType.BALL_BOWLED -> innings.ballBowled()
+                                EventType.BALL_BOWLED -> innings.ballBowledAndEndOverCheck()
                                 EventType.EXTRA_BALL -> innings.extraBall()
                                 EventType.OVER_BOWLED -> innings.endOver()
                             }
@@ -67,26 +67,44 @@ class Innings private constructor(
     }
 
     /**
-     * A ball has been bowled in the current over. Add to the balls bowled and if this
-     * equals or exceeds the ball limit end the over.
+     * A ball has been bowled in the current over. Add to the balls bowled and if this has caused
+     * the over to end end the over and return True, or else return False.
      *
      * @return Whether the over has ended or not
      */
-    fun ballBowled(): Boolean {
-        overs[oversBowled].ballBowled()
+    fun ballBowledAndEndOverCheck(): Boolean {
+        ballBowled()
+        return endOverCheck()
+
+    }
+
+    /**
+     * Add to the balls bowled and add ball bowled event.
+     */
+    private fun ballBowled() {
+        getCurrentOver().ballBowled()
         eventStack.push(Event(EventType.BALL_BOWLED))
-        if (overs[oversBowled].ballsBowled >= overs[oversBowled].ballLimit) {
+    }
+
+    /**
+     * Check if the amount of balls bowled has exceeded the limit for the over. If so end the over,
+     * return true if over ended or false if not.
+     *
+     * @return true if over has ended or false if not.
+     */
+    private fun endOverCheck(): Boolean {
+        val isOverEnded = getCurrentOver().isBallLimitMetOrExceeded()
+        if (isOverEnded) {
             endOver(causedByPreviousEvent = true)
-            return false
         }
-        return true
+        return isOverEnded
     }
 
     /**
      * Undo the last ball that was bowled.
      */
     private fun undoBallBowled() {
-        overs[oversBowled].undoBallBowled()
+        getCurrentOver().undoBallBowled()
     }
 
     /**
@@ -96,7 +114,7 @@ class Innings private constructor(
      * @return Whether the over has ended or not
      */
     fun extraBall(): Boolean {
-        overs[oversBowled].extraBall()
+        getCurrentOver().extraBall()
         eventStack.push(Event(EventType.EXTRA_BALL))
         return false
     }
@@ -105,7 +123,7 @@ class Innings private constructor(
      * Undo the last extra ball that was added.
      */
     private fun undoExtraBall() {
-        overs[oversBowled].undoExtraBall()
+        getCurrentOver().undoExtraBall()
     }
 
     /**
@@ -144,16 +162,7 @@ class Innings private constructor(
      */
     fun undoLastAction(): Boolean {
         try {
-            // Undo one event and any that caused that and prior events
-            do {
-                // Pop last event and execute inverse
-                val event: Event = eventStack.pop()
-                when (event.eventType) {
-                    EventType.BALL_BOWLED -> undoBallBowled()
-                    EventType.EXTRA_BALL -> undoExtraBall()
-                    EventType.OVER_BOWLED -> undoEndOver()
-                }
-            } while (event.causedByPreviousEvent)
+           undoLastActionAndAllThatCausedTheAction()
         } catch(e: NoSuchElementException) {
             // No action to undo so do nothing
         }
@@ -161,17 +170,46 @@ class Innings private constructor(
     }
 
     /**
+     * Take the last action and all prior actions that caused it and
+     * do the inverse of their operation.
+     *
+     * @throws NoSuchElementException if there are no actions to undo.
+     */
+    @Throws(NoSuchElementException::class)
+    private fun undoLastActionAndAllThatCausedTheAction() {
+        // Undo one event and any that caused that and prior events
+        do {
+            // Pop last event and execute inverse
+            val event: Event = eventStack.pop()
+            doEventInverse(event)
+        } while (event.causedByPreviousEvent)
+    }
+
+    /**
+     * Do the inverse of the given event.
+     *
+     * @param event The event to do the inverse of.
+     */
+    private fun doEventInverse(event: Event) {
+        when (event.eventType) {
+            EventType.BALL_BOWLED -> undoBallBowled()
+            EventType.EXTRA_BALL -> undoExtraBall()
+            EventType.OVER_BOWLED -> undoEndOver()
+        }
+    }
+
+    /**
      * @return the number of balls bowled so far this over.
      */
     fun getBallsBowled(): Int {
-        return overs[oversBowled].ballsBowled
+        return getCurrentOver().ballsBowled
     }
 
     /**
      * @return the limit of balls for the current over.
      */
     fun getBallLimit(): Int {
-        return overs[oversBowled].ballLimit
+        return getCurrentOver().ballLimit
     }
 
     /**
@@ -182,20 +220,45 @@ class Innings private constructor(
     }
 
     /**
+     * @return the current over
+     */
+    private fun getCurrentOver(): Over {
+        return overs[oversBowled]
+    }
+
+    /**
      * Write the innings to file for data persistence.
      * Write json as a list of events that have happened so far in the game.
      */
-    fun writeToFile(context: Context) {
-        // Generate json events
-        val jsonArray = JSONArray()
-        eventStack.forEach {
-            jsonArray.put(it.toJson())
-        }
-        // Write json to file
+    fun writeToInningsFile(context: Context) {
+        val json = getInningsEventsAsJson()
         val file = File(context.filesDir, filename)
+        writeJsonToFile(json, file)
+    }
+
+    /**
+     * Get the events in the innings as an ordered JSONArray.
+     *
+     * @return The JSONArray of events.
+     */
+    private fun getInningsEventsAsJson(): JSONArray {
+        val json = JSONArray()
+        eventStack.forEach {
+            json.put(it.toJson())
+        }
+        return json
+    }
+
+    /**
+     * Write the given JSONArray to the given File.
+     *
+     * @param json The JSONArray to write to file.
+     * @param file The File to write the JSONArray to
+     */
+    private fun writeJsonToFile(json: JSONArray, file: File) {
         FileWriter(file).use {
             try {
-                it.write(jsonArray.toString())
+                it.write(json.toString())
             } catch (e: IOException) {
                 Log.e("innings.writeToFile", "Failed to write to file", e)
             }

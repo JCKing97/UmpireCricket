@@ -16,7 +16,7 @@ class InningsActivity : AppCompatActivity() {
         val innings = intent.getSerializableExtra("innings") as Innings
 
         val ballBowledButton = findViewById<Button>(R.id.ballBowledButton)
-        ballBowledButton.setOnClickListener{ inningsAction(innings) { innings.ballBowled() } }
+        ballBowledButton.setOnClickListener{ inningsAction(innings) { innings.ballBowledAndEndOverCheck() } }
 
         val extraBallButton = findViewById<Button>(R.id.extraBallButton)
         extraBallButton.setOnClickListener{ inningsAction(innings) { innings.extraBall() } }
@@ -33,7 +33,7 @@ class InningsActivity : AppCompatActivity() {
     private fun inningsAction(innings: Innings, action: () -> Boolean ) {
         val overEnded = action()
         updateDisplayText()
-        innings.writeToFile(applicationContext)
+        innings.writeToInningsFile(applicationContext)
         if (overEnded) {
             selectBowler(innings)
         }

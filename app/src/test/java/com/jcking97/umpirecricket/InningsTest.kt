@@ -32,10 +32,10 @@ class InningsTest {
     fun whenBallsBowledThenCurrentBallIncreasedWhenBallsBowledReachesLimitThenNewOver() {
         for (over in 1..3) {
             for (ball in 1..5) {
-                innings.ballBowled()
+                innings.ballBowledAndEndOverCheck()
                 assertBallsLimitOver(ball, 6, over-1)
             }
-            innings.ballBowled()
+            innings.ballBowledAndEndOverCheck()
             assertBallsLimitOver(0, 6, over)
         }
     }
@@ -57,10 +57,10 @@ class InningsTest {
                 assertBallsLimitOver(extraBall, extraBall+6, over-1)
             }
             for (ball in 1..5) {
-                innings.ballBowled()
+                innings.ballBowledAndEndOverCheck()
                 assertBallsLimitOver(extraBalls+ball, extraBalls+6, over-1)
             }
-            innings.ballBowled()
+            innings.ballBowledAndEndOverCheck()
             assertBallsLimitOver(0, 6, over)
         }
     }
@@ -76,7 +76,7 @@ class InningsTest {
     @Test
     fun whenNewBallThenAddedWhenUndoThenRemoved() {
         for (ball in 1..5) {
-            innings.ballBowled()
+            innings.ballBowledAndEndOverCheck()
             assertBallsLimitOver(1, 6, 0)
             innings.undoLastAction()
             assertBallsLimitOver(0, 6, 0)
@@ -87,7 +87,7 @@ class InningsTest {
     fun whenNewBallMultipleThenAddedWhenUndoMultipleThenRemoved() {
         val balls = 5
         for (ball in 1..balls) {
-            innings.ballBowled()
+            innings.ballBowledAndEndOverCheck()
             assertBallsLimitOver(ball, 6, 0)
         }
         for (ballRemoved in balls-1 downTo 0) {
@@ -152,12 +152,12 @@ class InningsTest {
         for (over in 1..overs) {
             for (ball in 1..balls) {
                 assertBallsLimitOver(ball-1, 6, over-1)
-                innings.ballBowled()
+                innings.ballBowledAndEndOverCheck()
             }
             assertBallsLimitOver(0, 6, over)
             innings.undoLastAction()
             assertBallsLimitOver(balls-1, 6, over-1)
-            innings.ballBowled()
+            innings.ballBowledAndEndOverCheck()
         }
     }
 
@@ -168,7 +168,7 @@ class InningsTest {
         for (over in 1..overs) {
             for (ball in 1..balls) {
                 assertBallsLimitOver(ball-1, 6, over-1)
-                innings.ballBowled()
+                innings.ballBowledAndEndOverCheck()
             }
             assertBallsLimitOver(0, 6, over)
         }
@@ -194,11 +194,11 @@ class InningsTest {
                 assertBallsLimitOver((ball-1)+extraBallsSoFar-1, 6+extraBallsSoFar-1, 0)
                 innings.extraBall()
             }
-            innings.ballBowled()
+            innings.ballBowledAndEndOverCheck()
             assertBallsLimitOver(ball+extraBallsSoFar, 6+extraBallsSoFar, 0)
             innings.undoLastAction()
             assertBallsLimitOver(ball+extraBallsSoFar-1, 6+extraBallsSoFar, 0)
-            innings.ballBowled()
+            innings.ballBowledAndEndOverCheck()
         }
     }
 
@@ -213,7 +213,7 @@ class InningsTest {
                 extraBallsSoFar++
                 assertBallsLimitOver((ball-1)+extraBallsSoFar, 6+extraBallsSoFar, 0)
             }
-            innings.ballBowled()
+            innings.ballBowledAndEndOverCheck()
             assertBallsLimitOver(ball+extraBallsSoFar, 6+extraBallsSoFar, 0)
         }
         for (ballRemoved in balls downTo 1) {
@@ -287,12 +287,12 @@ class InningsTest {
         var oversSoFar = 0
         for (over in 1..5) {
             for (balls in 1..3) {
-                innings.ballBowled()
+                innings.ballBowledAndEndOverCheck()
                 ballsSoFar++
                 assertBallsLimitOver(ballsSoFar, 6, oversSoFar)
                 innings.undoLastAction()
                 assertBallsLimitOver(ballsSoFar-1, 6, oversSoFar)
-                innings.ballBowled()
+                innings.ballBowledAndEndOverCheck()
             }
             for (extraBall in 1..7) {
                 innings.extraBall()
@@ -303,20 +303,20 @@ class InningsTest {
                 innings.extraBall()
             }
             for (balls in 1..2) {
-                innings.ballBowled()
+                innings.ballBowledAndEndOverCheck()
                 ballsSoFar++
                 assertBallsLimitOver(ballsSoFar + extraBallsSoFar, 6 + extraBallsSoFar, oversSoFar)
                 innings.undoLastAction()
                 assertBallsLimitOver(ballsSoFar + extraBallsSoFar-1, 6 + extraBallsSoFar, oversSoFar)
-                innings.ballBowled()
+                innings.ballBowledAndEndOverCheck()
             }
-            innings.ballBowled()
+            innings.ballBowledAndEndOverCheck()
             ballsSoFar++
             oversSoFar++
             assertBallsLimitOver(0, 6, oversSoFar)
             innings.undoLastAction()
             assertBallsLimitOver(ballsSoFar + extraBallsSoFar-1, 6 + extraBallsSoFar, oversSoFar-1)
-            innings.ballBowled()
+            innings.ballBowledAndEndOverCheck()
             innings.endOver()
             oversSoFar++
             assertBallsLimitOver(0, 6, oversSoFar)
@@ -339,7 +339,7 @@ class InningsTest {
         val extraBalls = 7
         for (over in 1..overs) {
             for (balls in 1..balls1) {
-                innings.ballBowled()
+                innings.ballBowledAndEndOverCheck()
                 ballsSoFar++
                 assertBallsLimitOver(ballsSoFar, 6, oversSoFar)
             }
@@ -349,11 +349,11 @@ class InningsTest {
                 assertBallsLimitOver(ballsSoFar + extraBallsSoFar, 6 + extraBallsSoFar, oversSoFar)
             }
             for (balls in 1..balls2) {
-                innings.ballBowled()
+                innings.ballBowledAndEndOverCheck()
                 ballsSoFar++
                 assertBallsLimitOver(ballsSoFar + extraBallsSoFar, 6 + extraBallsSoFar, oversSoFar)
             }
-            innings.ballBowled()
+            innings.ballBowledAndEndOverCheck()
             ballsSoFar++
             oversSoFar++
             assertBallsLimitOver(0, 6, oversSoFar)

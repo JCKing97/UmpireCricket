@@ -42,9 +42,9 @@ class SaveReloadInningsTest {
     @Test
     fun testGivenBallBowledWhenSaveToAndReloadFromFileThenActionsPreserved() {
         val innings = Innings.newInnings()
-        innings.ballBowled()
+        innings.ballBowledAndEndOverCheck()
         assertBallsLimitOver(innings, 1, 6, 0)
-        innings.writeToFile(appContext)
+        innings.writeToInningsFile(appContext)
         val newInnings = Innings.fromFile(appContext)
         assertBallsLimitOver(newInnings, 1, 6, 0)
     }
@@ -54,7 +54,7 @@ class SaveReloadInningsTest {
         val innings = Innings.newInnings()
         innings.extraBall()
         assertBallsLimitOver(innings, 1, 7, 0)
-        innings.writeToFile(appContext)
+        innings.writeToInningsFile(appContext)
         val newInnings = Innings.fromFile(appContext)
         assertBallsLimitOver(newInnings, 1, 7, 0)
     }
@@ -64,7 +64,7 @@ class SaveReloadInningsTest {
         val innings = Innings.newInnings()
         innings.endOver()
         assertBallsLimitOver(innings, 0, 6, 1)
-        innings.writeToFile(appContext)
+        innings.writeToInningsFile(appContext)
         val newInnings = Innings.fromFile(appContext)
         assertBallsLimitOver(newInnings, 0, 6, 1)
     }
@@ -72,9 +72,9 @@ class SaveReloadInningsTest {
     @Test
     fun testGivenBallBowledWhenSaveToAndReloadFromFileThenActionsPreservedWhenUndoThenActionsRemoved() {
         val innings = Innings.newInnings()
-        innings.ballBowled()
+        innings.ballBowledAndEndOverCheck()
         assertBallsLimitOver(innings, 1, 6, 0)
-        innings.writeToFile(appContext)
+        innings.writeToInningsFile(appContext)
         val newInnings = Innings.fromFile(appContext)
         assertBallsLimitOver(newInnings, 1, 6, 0)
         newInnings.undoLastAction()
@@ -86,7 +86,7 @@ class SaveReloadInningsTest {
         val innings = Innings.newInnings()
         innings.extraBall()
         assertBallsLimitOver(innings, 1, 7, 0)
-        innings.writeToFile(appContext)
+        innings.writeToInningsFile(appContext)
         val newInnings = Innings.fromFile(appContext)
         assertBallsLimitOver(newInnings, 1, 7, 0)
         newInnings.undoLastAction()
@@ -98,7 +98,7 @@ class SaveReloadInningsTest {
         val innings = Innings.newInnings()
         innings.endOver()
         assertBallsLimitOver(innings, 0, 6, 1)
-        innings.writeToFile(appContext)
+        innings.writeToInningsFile(appContext)
         val newInnings = Innings.fromFile(appContext)
         assertBallsLimitOver(newInnings, 0, 6, 1)
         newInnings.undoLastAction()
@@ -109,11 +109,11 @@ class SaveReloadInningsTest {
     fun testGivenBallsBowledAndOneUndoWhenSaveToAndReloadFromFileThenActionsPreserved() {
         val innings = Innings.newInnings()
         for (ball in 1..2) {
-            innings.ballBowled()
+            innings.ballBowledAndEndOverCheck()
         }
         innings.undoLastAction()
         assertBallsLimitOver(innings, 1, 6, 0)
-        innings.writeToFile(appContext)
+        innings.writeToInningsFile(appContext)
         val newInnings = Innings.fromFile(appContext)
         assertBallsLimitOver(newInnings, 1, 6, 0)
     }
@@ -126,7 +126,7 @@ class SaveReloadInningsTest {
         }
         innings.undoLastAction()
         assertBallsLimitOver(innings, 1, 7, 0)
-        innings.writeToFile(appContext)
+        innings.writeToInningsFile(appContext)
         val newInnings = Innings.fromFile(appContext)
         assertBallsLimitOver(newInnings, 1, 7, 0)
     }
@@ -139,7 +139,7 @@ class SaveReloadInningsTest {
         }
         innings.undoLastAction()
         assertBallsLimitOver(innings, 0, 6, 1)
-        innings.writeToFile(appContext)
+        innings.writeToInningsFile(appContext)
         val newInnings = Innings.fromFile(appContext)
         assertBallsLimitOver(newInnings, 0, 6, 1)
     }
@@ -148,10 +148,10 @@ class SaveReloadInningsTest {
     fun testGivenBallsBowledAndOneUndoWhenSaveToAndReloadFromFileThenActionsPreservedWhenUndoThenActionsRemoved() {
         val innings = Innings.newInnings()
         for (ball in 1..2) {
-            innings.ballBowled()
+            innings.ballBowledAndEndOverCheck()
         }
         assertBallsLimitOver(innings, 2, 6, 0)
-        innings.writeToFile(appContext)
+        innings.writeToInningsFile(appContext)
         val newInnings = Innings.fromFile(appContext)
         assertBallsLimitOver(newInnings, 2, 6, 0)
         newInnings.undoLastAction()
@@ -165,7 +165,7 @@ class SaveReloadInningsTest {
             innings.extraBall()
         }
         assertBallsLimitOver(innings, 2, 8, 0)
-        innings.writeToFile(appContext)
+        innings.writeToInningsFile(appContext)
         val newInnings = Innings.fromFile(appContext)
         assertBallsLimitOver(newInnings, 2, 8, 0)
         newInnings.undoLastAction()
@@ -179,7 +179,7 @@ class SaveReloadInningsTest {
             innings.endOver()
         }
         assertBallsLimitOver(innings, 0, 6, 2)
-        innings.writeToFile(appContext)
+        innings.writeToInningsFile(appContext)
         val newInnings = Innings.fromFile(appContext)
         assertBallsLimitOver(newInnings, 0, 6, 2)
         newInnings.undoLastAction()
@@ -201,7 +201,7 @@ class SaveReloadInningsTest {
             ballsSoFar = 0
             extraBallsSoFar = 0
             for (balls in 1..balls) {
-                innings.ballBowled()
+                innings.ballBowledAndEndOverCheck()
                 ballsSoFar++
             }
             oversSoFar += ballsSoFar / 6
@@ -212,7 +212,7 @@ class SaveReloadInningsTest {
             }
         }
         assertBallsLimitOver(innings, ballsSoFar+extraBallsSoFar, 6+extraBallsSoFar, oversSoFar)
-        innings.writeToFile(appContext)
+        innings.writeToInningsFile(appContext)
         val newInnings = Innings.fromFile(appContext)
         assertBallsLimitOver(newInnings, ballsSoFar+extraBallsSoFar, 6+extraBallsSoFar, oversSoFar)
     }
@@ -232,7 +232,7 @@ class SaveReloadInningsTest {
             ballsSoFar = 0
             extraBallsSoFar = 0
             for (ball in 1..balls) {
-                innings.ballBowled()
+                innings.ballBowledAndEndOverCheck()
                 ballsSoFar++
             }
             oversSoFar += ballsSoFar / 6
@@ -243,7 +243,7 @@ class SaveReloadInningsTest {
             }
         }
         assertBallsLimitOver(innings, ballsSoFar+extraBallsSoFar, 6+extraBallsSoFar, oversSoFar)
-        innings.writeToFile(appContext)
+        innings.writeToInningsFile(appContext)
         val newInnings = Innings.fromFile(appContext)
         assertBallsLimitOver(newInnings, ballsSoFar+extraBallsSoFar, 6+extraBallsSoFar, oversSoFar)
         for (overRemoved in overs downTo 1) {
@@ -292,7 +292,7 @@ class SaveReloadInningsTest {
             ballsSoFar = 0
             extraBallsSoFar = 0
             for (balls in 1..balls) {
-                innings.ballBowled()
+                innings.ballBowledAndEndOverCheck()
                 ballsSoFar++
             }
             innings.undoLastAction()
@@ -307,7 +307,7 @@ class SaveReloadInningsTest {
             extraBallsSoFar--
         }
         assertBallsLimitOver(innings, ballsSoFar+extraBallsSoFar, 6+extraBallsSoFar, oversSoFar)
-        innings.writeToFile(appContext)
+        innings.writeToInningsFile(appContext)
         val newInnings = Innings.fromFile(appContext)
         assertBallsLimitOver(newInnings, ballsSoFar+extraBallsSoFar, 6+extraBallsSoFar, oversSoFar)
     }
@@ -327,7 +327,7 @@ class SaveReloadInningsTest {
             ballsSoFar = 0
             extraBallsSoFar = 0
             for (balls in 1..balls) {
-                innings.ballBowled()
+                innings.ballBowledAndEndOverCheck()
                 ballsSoFar++
             }
             oversSoFar += ballsSoFar / 6
@@ -338,7 +338,7 @@ class SaveReloadInningsTest {
             }
         }
         assertBallsLimitOver(innings, ballsSoFar+extraBallsSoFar, 6+extraBallsSoFar, oversSoFar)
-        innings.writeToFile(appContext)
+        innings.writeToInningsFile(appContext)
         val newInnings = Innings.newInnings()
         assertBallsLimitOver(newInnings, 0, 6, 0)
     }
