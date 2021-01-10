@@ -4,14 +4,30 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.io.Serializable
 import java.lang.IllegalArgumentException
+import java.util.*
 
 /**
- * An event that occurred in an innings.
+ * An abstract event that occurred in an innings.
  *
- * @param eventType The type of the event e.g. ball bowled, over bowled
  * @param causedByPreviousEvent Whether the event was cause by the event directly prior to it
  */
-class Event(val eventType: EventType, val causedByPreviousEvent: Boolean = false): Serializable {
+abstract class Event(val innings: Innings, val causedByPreviousEvent: Boolean = false): Serializable {
+
+    abstract val eventType: String
+
+    /**
+     * Do the event, executing actions on the innings.
+     *
+     * @return An event caused by this event.
+     */
+    abstract fun doEvent(): Event?
+
+    /**
+     * Do the inverse of the event, undoing any actions on the innings.
+     *
+     * @return true if event has been caused by another.
+     */
+    abstract fun doEventInverse(): Boolean
 
     companion object {
 
@@ -26,13 +42,14 @@ class Event(val eventType: EventType, val causedByPreviousEvent: Boolean = false
          * @throws JSONException If the json is not valid for the Event
          */
         @Throws(JSONException::class)
-        fun fromJson(json: JSONObject): Event {
+        fun fromJson(innings: Innings, json: JSONObject): Event {
             val eventType = json.getString(eventTypeKey)
-            try {
-                return Event(
-                    EventType.valueOf(eventType),
-                    json.getBoolean(causedByPreviousEventKey)
-                )
+            return try {
+                when (EventType.valueOf(eventType)) {
+                    EventType.BALL_BOWLED -> BallBowledEvent(innings)
+                    EventType.EXTRA_BALL -> ExtraBallEvent(innings)
+                    EventType.OVER_BOWLED -> EndOverEvent(innings, json.getBoolean(causedByPreviousEventKey))
+                }
             } catch (e: IllegalArgumentException) {
                 throw JSONException(
                     "Incorrect event type: ${eventType}, available: ${EventType.values()}"
@@ -51,14 +68,8 @@ class Event(val eventType: EventType, val causedByPreviousEvent: Boolean = false
     @Throws(JSONException::class)
     fun toJson(): JSONObject {
         val jsonObject = JSONObject()
-        jsonObject.put(eventTypeKey, eventType.name)
+        jsonObject.put(eventTypeKey, eventType)
         jsonObject.put(causedByPreviousEventKey, causedByPreviousEvent)
         return jsonObject
     }
-}
-
-enum class EventType {
-    BALL_BOWLED,
-    EXTRA_BALL,
-    OVER_BOWLED
 }
