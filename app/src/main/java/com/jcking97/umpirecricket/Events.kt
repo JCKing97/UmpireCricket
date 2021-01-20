@@ -58,7 +58,10 @@ class Events: Serializable {
      *
      * @param event The event to execute
      */
-    fun executeEvenButNotEventsItCauses(event: Event) {
+    fun executeEventButNotEventsItCauses(event: Event) {
+        if (event.eventType == EventType.OVER_BOWLED.toString() && !event.causedByPreviousEvent) {
+            println("Over bowled not caused by previoud event")
+        }
         events.push(event)
         event.doEvent()
     }

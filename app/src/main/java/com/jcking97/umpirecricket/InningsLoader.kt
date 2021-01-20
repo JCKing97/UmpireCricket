@@ -16,7 +16,7 @@ interface InningsLoader: Serializable {
     /**
      * Load an innings and it's events.
      */
-    fun loadInnings(): Pair<Innings, Events>
+    fun loadInnings(): InningsAndEvents
 
 }
 
@@ -30,7 +30,7 @@ class FileInningsLoader(private val file: File): InningsLoader {
     /**
      * Load the innings and it's events from file.
      */
-    override fun loadInnings(): Pair<Innings, Events> {
+    override fun loadInnings(): InningsAndEvents {
         val innings = Innings()
         val events = try {
             createEventsFromFile(innings)
@@ -47,7 +47,7 @@ class FileInningsLoader(private val file: File): InningsLoader {
             )
             Events()
         }
-        return Pair(innings, events)
+        return InningsAndEvents(innings, events)
     }
 
     /**
@@ -61,9 +61,10 @@ class FileInningsLoader(private val file: File): InningsLoader {
         val events = Events()
         FileReader(file).use {
             val json = JSONArray(it.readText())
+            println("EVENTS LOADING")
             for (i in json.length() - 1 downTo 0) {
                 val event = Event.fromJson(innings, json.getJSONObject(i))
-                events.executeEvenButNotEventsItCauses(event)
+                events.executeEventButNotEventsItCauses(event)
             }
         }
         return events
@@ -79,10 +80,10 @@ class NewInningsLoader: InningsLoader {
     /**
      * Load a new innings and events.
      */
-    override fun loadInnings(): Pair<Innings, Events> {
+    override fun loadInnings(): InningsAndEvents {
         val innings = Innings()
         val events = Events()
-        return Pair(innings, events)
+        return InningsAndEvents(innings, events)
     }
 
 }

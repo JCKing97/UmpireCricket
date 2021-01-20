@@ -33,8 +33,8 @@ class InningsActivity : AppCompatActivity() {
         // Load the innings
         val inningsLoader = intent.getSerializableExtra("inningsLoader") as InningsLoader
         val inningsEvents = inningsLoader.loadInnings()
-        innings = inningsEvents.first
-        events = inningsEvents.second
+        innings = inningsEvents.innings
+        events = inningsEvents.events
 
         // Get the file writer
         inningsFileWriter = intent.getSerializableExtra("inningsFileWriter") as InningsFileWriter

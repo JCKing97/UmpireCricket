@@ -1,7 +1,6 @@
 package com.jcking97.umpirecricket
 
 import com.jcking97.umpirecricket.Utilities.assertBallsLimitOver
-import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 
