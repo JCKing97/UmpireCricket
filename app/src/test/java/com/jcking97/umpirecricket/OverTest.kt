@@ -75,9 +75,84 @@ class OverTest {
 
     @Test
     fun whenBallLimitNotMetOrExceededThenOverNotEnded() {
-        for (i in 1..over.ballLimit-1) {
+        for (i in 1 until over.ballLimit) {
             over.ballBowled()
             assertFalse(over.isBallLimitMetOrExceeded())
         }
+    }
+
+    @Test
+    fun givenNoBallBowledWhenUndoBallBowledThenBallNotUndo() {
+        for (i in 1..3) {
+            over.undoBallBowled()
+            assertEquals(0, over.ballsBowled)
+        }
+    }
+
+    @Test
+    fun givenNoExtraBallBowledWhenUndoBallBowledThenBallNotUndone() {
+        for (i in 1..3) {
+            over.undoExtraBall()
+            assertEquals(0, over.ballsBowled)
+            assertEquals(6, over.ballLimit)
+        }
+    }
+
+    @Test
+    fun givenBallBowledWhenUndoExtraBallThenBallNotUndone() {
+        val balls = 3
+        for (ball in 1..balls) {
+            over.ballBowled()
+        }
+        for (ball in balls downTo 1) {
+            over.undoExtraBall()
+            assertEquals(balls, over.ballsBowled)
+            assertEquals(6, over.ballLimit)
+        }
+    }
+
+    @Test
+    fun givenExtraBallsWhenUndoBallBowledThenBallUndoneAndNotExtraUndone() {
+        val balls = 3
+        for (ball in 1..balls) {
+            over.extraBall()
+        }
+        for (ball in balls-1 downTo 0) {
+            over.undoBallBowled()
+            assertEquals(ball, over.ballsBowled)
+            assertEquals(6+balls, over.ballLimit)
+        }
+    }
+
+    @Test
+    fun givenBallsBowledWhenUndoBallsBowledThenBallsUndone() {
+        val balls = 3
+        for (ball in 1..balls) {
+            over.ballBowled()
+        }
+        for (ball in balls-1 downTo 0) {
+            over.undoBallBowled()
+            assertEquals(ball, over.ballsBowled)
+            assertEquals(6, over.ballLimit)
+        }
+        over.undoBallBowled()
+        assertEquals(0, over.ballsBowled)
+        assertEquals(6, over.ballLimit)
+    }
+
+    @Test
+    fun givenExtraBallsWhenUndoExtraBallsThenExtraBallsUndone() {
+        val balls = 3
+        for (ball in 1..balls) {
+            over.extraBall()
+        }
+        for (ball in balls-1 downTo 0) {
+            over.undoExtraBall()
+            assertEquals(ball, over.ballsBowled)
+            assertEquals(6+ball, over.ballLimit)
+        }
+        over.undoBallBowled()
+        assertEquals(0, over.ballsBowled)
+        assertEquals(6, over.ballLimit)
     }
 }

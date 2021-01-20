@@ -29,7 +29,9 @@ class Over(
      * Undo a ball being bowled.
      */
     fun undoBallBowled() {
-        ballsBowled--
+        if (ballsBowled > 0) {
+            ballsBowled--
+        }
     }
 
     /**
@@ -45,8 +47,10 @@ class Over(
      * Undo an extra ball.
      */
     fun undoExtraBall() {
-        ballLimit--
-        undoBallBowled()
+        if (ballLimit > 6) {
+            ballLimit--
+            undoBallBowled()
+        }
     }
 
     /**
