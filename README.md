@@ -6,4 +6,4 @@ An application to assist umpires in keeping track of overs, balls and bowlers, a
 
 A flowchart to describe the application's flow:
 
-![Cricket Umpire Flowchart](design/Cricket Umpire Flowchart.png)
+![Cricket Umpire Flowchart](https://raw.githubusercontent.com/JCKing97/UmpireCricket/master/design/Cricket%20Umpire%20Flowchart.png)
