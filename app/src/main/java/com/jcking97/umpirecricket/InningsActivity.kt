@@ -1,5 +1,7 @@
 package com.jcking97.umpirecricket
 
+import android.app.Activity
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 // import android.content.Intent
 import android.os.Bundle
@@ -81,16 +83,28 @@ class InningsActivity : AppCompatActivity() {
         overCountText.text = "Overs: ${innings.getOversBowled()}"
     }
 
-//    /**
-//     * Allow the user to select the next over's bowler.
-//     */
-//    private fun selectBowler(innings: Innings) {
-//        val intent = Intent(this, BowlerActivity::class.java)
-//        intent.putExtra("bowlers", innings.bowlers)
-//        intent.putExtra("lastOverBowler", innings.overs.last().bowlerIndex)
-//        intent.putExtra("newOverBowler", 2)
-//        startActivity(intent)
-//    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 1) {
+            if (resultCode == Activity.RESULT_OK && data != null) {
+                data.apply {
+                    val selectedBowler = getIntExtra("SELECTED_BOWLER", 0)
+                    innings.getCurrentOver().bowlerIndex = selectedBowler
+                }
+            }
+        }
+    }
+
+    /**
+     * Allow the user to select the next over's bowler.
+     */
+    private fun selectBowler(innings: Innings) {
+        val intent = Intent(this, BowlerActivity::class.java)
+        intent.putExtra("bowlers", innings.bowlers)
+        intent.putExtra("lastOverBowler", innings.overs.last().bowlerIndex)
+        intent.putExtra("newOverBowler", 2)
+        startActivityForResult(intent, 1)
+    }
 
     /**
      * Execute a ball bowled action.
@@ -114,6 +128,7 @@ class InningsActivity : AppCompatActivity() {
     private fun endOver() {
         val endOverEvent = EndOverEvent(innings,false)
         events.executeEvent(endOverEvent)
+        selectBowler(innings)
     }
 
     /**
