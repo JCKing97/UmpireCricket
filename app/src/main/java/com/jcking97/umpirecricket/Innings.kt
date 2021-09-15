@@ -1,5 +1,6 @@
 package com.jcking97.umpirecricket
 
+import org.json.JSONObject
 import java.io.*
 import java.util.*
 
@@ -53,6 +54,7 @@ class Innings constructor(
 
     fun newBowler(bowler: Bowler) {
         bowlers.add(bowler)
+        println(bowlers)
     }
 
     fun undoAddBowler(bowler: Bowler) {

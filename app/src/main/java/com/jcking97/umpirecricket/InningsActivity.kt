@@ -85,8 +85,10 @@ class InningsActivity : AppCompatActivity() {
         if (requestCode == 1) {
             if (resultCode == Activity.RESULT_OK && data != null) {
                 data.apply {
-                    val selectedBowler = getIntExtra("SELECTED_BOWLER", 0)
-                    innings.getCurrentOver().bowlerIndex = selectedBowler
+                    val selectedBowler = getSerializableExtra("bowler") as Bowler
+                    innings = getSerializableExtra("innings") as Innings
+                    events = getSerializableExtra("events") as Events
+                    innings.getCurrentOver().bowlerIndex = innings.bowlers.indexOf(selectedBowler)
                 }
             }
         }

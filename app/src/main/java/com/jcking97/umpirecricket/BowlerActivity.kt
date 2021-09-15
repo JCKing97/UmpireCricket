@@ -12,6 +12,7 @@ import android.R.attr.maxLength
 
 import android.text.InputFilter
 import android.text.InputFilter.LengthFilter
+import android.text.TextWatcher
 
 
 class BowlerActivity : AppCompatActivity() {
@@ -62,6 +63,7 @@ class BowlerActivity : AppCompatActivity() {
             bowlerNameText.setFilters(arrayOf<InputFilter>(LengthFilter(30)))
             bowlerNameText.setText(newBowler.name)
             bowlerNameText.setSingleLine()
+            bowlerNameText.addTextChangedListener(BowlerNameTextWatcher(newBowler, innings, events))
             val bowlerNameTextLayout = TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT)
             bowlerNameTextLayout.span = 80
             bowlerNameText.setLayoutParams(bowlerNameTextLayout)
@@ -71,7 +73,7 @@ class BowlerActivity : AppCompatActivity() {
                 bowlerSelectButton.setAlpha(.5f);
                 bowlerSelectButton.setClickable(false);
             } else {
-                bowlerSelectButton.setOnClickListener { selectBowler(table.childCount) }
+                bowlerSelectButton.setOnClickListener { selectBowler(newBowler) }
             }
             newRow.addView(bowlerNameText)
             newRow.addView(bowlerSelectButton)
@@ -79,9 +81,11 @@ class BowlerActivity : AppCompatActivity() {
         }
     }
 
-    private fun selectBowler(bowlerIndex: Int) {
+    private fun selectBowler(bowler: Bowler) {
         val data = intent.apply {
-            putExtra("SELECTED_BOWLER", bowlerIndex)
+            putExtra("innings", innings)
+            putExtra("events", events)
+            putExtra("bowler", bowler)
         }
         setResult(RESULT_OK, data)
         finish()

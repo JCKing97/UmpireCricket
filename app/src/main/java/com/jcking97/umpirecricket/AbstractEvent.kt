@@ -31,8 +31,9 @@ abstract class Event(val innings: Innings, val causedByPreviousEvent: Boolean = 
 
     companion object {
 
-        private const val eventTypeKey = "eventType"
-        private const val causedByPreviousEventKey = "causedByPreviousEvent"
+        const val eventTypeKey = "eventType"
+        const val causedByPreviousEventKey = "causedByPreviousEvent"
+        const val bowlerKey = "bowler"
 
         /**
          * Create an Event from a JSONObject.
@@ -50,6 +51,7 @@ abstract class Event(val innings: Innings, val causedByPreviousEvent: Boolean = 
                     EventType.EXTRA_BALL -> ExtraBallEvent(innings)
                     EventType.OVER_BOWLED -> EndOverEvent(innings, json.getBoolean(causedByPreviousEventKey))
                     EventType.NEW_BOWLER -> NewBowlerEvent(innings)
+                    EventType.CHANGE_BOWLER_NAME -> ChangeBowlerNameEvent.fromJson(innings, json)
                 }
             } catch (e: IllegalArgumentException) {
                 throw JSONException(
@@ -67,7 +69,7 @@ abstract class Event(val innings: Innings, val causedByPreviousEvent: Boolean = 
      * @throws JSONException If fails to create the json object
      */
     @Throws(JSONException::class)
-    fun toJson(): JSONObject {
+    open fun toJson(): JSONObject {
         val jsonObject = JSONObject()
         jsonObject.put(eventTypeKey, eventType)
         jsonObject.put(causedByPreviousEventKey, causedByPreviousEvent)
