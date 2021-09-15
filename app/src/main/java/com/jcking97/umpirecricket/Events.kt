@@ -29,14 +29,19 @@ class Events: Serializable {
     /**
      * Undo the event at the top of the stack and any events that caused it.
      */
-    fun undoLastEventAndCausingEvents() {
+    fun undoLastEventAndCausingEvents(): Boolean {
+        var triggeredSelectBowlerActivity = false
         return try {
             do {
                 val event = events.pop()
+                if (EventType.valueOf(event.eventType) == EventType.OVER_BOWLED) {
+                    triggeredSelectBowlerActivity = true
+                }
                 val causedByPreviousEvent = event.doEventInverse()
             } while (causedByPreviousEvent)
+            triggeredSelectBowlerActivity
         } catch (e: NoSuchElementException) {
-            // No events to undo
+            triggeredSelectBowlerActivity
         }
     }
 
@@ -45,12 +50,17 @@ class Events: Serializable {
      *
      * @param event The original event to execute
      */
-    fun executeEvent(event: Event) {
+    fun executeEvent(event: Event): Boolean {
+        var triggerBowlerActivity = false
         var currentEvent: Event? = event
         do {
             events.push(currentEvent!!)
+            if (EventType.valueOf(currentEvent.eventType) == EventType.OVER_BOWLED) {
+                triggerBowlerActivity = true
+            }
             currentEvent = currentEvent.doEvent()
         } while (currentEvent != null)
+        return triggerBowlerActivity
     }
 
     /**
@@ -60,10 +70,17 @@ class Events: Serializable {
      */
     fun executeEventButNotEventsItCauses(event: Event) {
         if (event.eventType == EventType.OVER_BOWLED.toString() && !event.causedByPreviousEvent) {
-            println("Over bowled not caused by previoud event")
+            println("Over bowled not caused by previous event")
         }
         events.push(event)
         event.doEvent()
+    }
+
+    /**
+     * @return true if events are empty, false if not.
+     */
+    fun isEmpty(): Boolean {
+        return events.isEmpty()
     }
 
 }

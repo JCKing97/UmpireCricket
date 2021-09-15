@@ -14,9 +14,9 @@ import java.util.*
  * @property eventStack A stack of all the events e.g. balls and overs bowled that have happened
  */
 class Innings constructor(
-    var bowlers: ArrayList<Bowler> = ArrayList(),
+    var bowlers: ArrayList<Bowler> = arrayListOf(Bowler(0)),
     private var oversBowled: Int = 0,
-    val overs: MutableList<Over> = mutableListOf(Over()),
+    val overs: MutableList<Over> = mutableListOf(Over(bowlers[0])),
     private val eventStack: LinkedList<Event> = LinkedList<Event>()
 ): Serializable {
 
@@ -54,7 +54,6 @@ class Innings constructor(
 
     fun newBowler(bowler: Bowler) {
         bowlers.add(bowler)
-        println(bowlers)
     }
 
     fun undoAddBowler(bowler: Bowler) {

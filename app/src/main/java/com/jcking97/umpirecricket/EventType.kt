@@ -8,5 +8,6 @@ enum class EventType {
     EXTRA_BALL,
     OVER_BOWLED,
     NEW_BOWLER,
-    CHANGE_BOWLER_NAME
+    CHANGE_BOWLER_NAME,
+    SELECT_BOWLER
 }

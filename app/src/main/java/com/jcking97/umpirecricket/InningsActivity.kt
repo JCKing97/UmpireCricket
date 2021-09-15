@@ -38,6 +38,10 @@ class InningsActivity : AppCompatActivity() {
         innings = inningsEvents.innings
         events = inningsEvents.events
 
+        if (events.isEmpty()) {
+            selectBowler(innings)
+        }
+
         // Get the file writer
         inningsFileWriter = intent.getSerializableExtra("inningsFileWriter") as InningsFileWriter
 
@@ -63,10 +67,13 @@ class InningsActivity : AppCompatActivity() {
      *
      * @param action An method that represents the action taking place.
      */
-    private fun inningsAction(action: () -> Unit) {
-        action()
+    private fun inningsAction(action: () -> Boolean) {
+        var triggeredSelectBowler = action()
         updateDisplayText()
         inningsFileWriter.writeEvents(events)
+        if (triggeredSelectBowler) {
+            selectBowler(innings)
+        }
     }
 
     /**
@@ -78,6 +85,10 @@ class InningsActivity : AppCompatActivity() {
         ballCountText.text = "${currentOver.ballsBowled} / ${currentOver.ballLimit}"
         val overCountText = findViewById<TextView>(R.id.oversCountText)
         overCountText.text = "Overs: ${innings.getOversBowled()}"
+        if (currentOver.bowler != null) {
+            val bowlerNameText = findViewById<TextView>(R.id.bowlerNameText)
+            bowlerNameText.text = "Bowler: ${currentOver.bowler!!.name}"
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -85,19 +96,18 @@ class InningsActivity : AppCompatActivity() {
         if (requestCode == 1) {
             if (resultCode == Activity.RESULT_OK && data != null) {
                 data.apply {
-                    val selectedBowler = getSerializableExtra("bowler") as Bowler
                     innings = getSerializableExtra("innings") as Innings
                     events = getSerializableExtra("events") as Events
-                    innings.getCurrentOver().bowlerIndex = innings.bowlers.indexOf(selectedBowler)
                 }
             }
         }
+        updateDisplayText()
     }
 
     /**
      * Allow the user to select the next over's bowler.
      */
-    private fun selectBowler(innings: Innings) {
+    fun selectBowler(innings: Innings) {
         val intent = Intent(this, BowlerActivity::class.java)
         intent.putExtra("innings", innings)
         intent.putExtra("events", events)
@@ -107,32 +117,31 @@ class InningsActivity : AppCompatActivity() {
     /**
      * Execute a ball bowled action.
      */
-    private fun ballBowled() {
+    private fun ballBowled(): Boolean {
         val ballBowledEvent = BallBowledEvent(innings)
-        events.executeEvent(ballBowledEvent)
+        return events.executeEvent(ballBowledEvent)
     }
 
     /**
      * Execute an extra ball action.
      */
-    private fun extraBall() {
+    private fun extraBall(): Boolean {
         val extraBallEvent = ExtraBallEvent(innings)
-        events.executeEvent(extraBallEvent)
+        return events.executeEvent(extraBallEvent)
     }
 
     /**
      * Execute an end over action.
      */
-    private fun endOver() {
+    private fun endOver(): Boolean {
         val endOverEvent = EndOverEvent(innings,false)
-        events.executeEvent(endOverEvent)
-        selectBowler(innings)
+        return events.executeEvent(endOverEvent)
     }
 
     /**
      * Undo the last event and any events it was caused by.
      */
-    private fun undoEvent() {
-        events.undoLastEventAndCausingEvents()
+    private fun undoEvent(): Boolean {
+        return events.undoLastEventAndCausingEvents()
     }
 }

@@ -5,14 +5,14 @@ import java.io.Serializable
 /**
  * A singular over. Generally made up of six balls unless wides or no balls are bowled.
  *
- * @property bowlerIndex The index of the bowler that bowled this over.
+ * @property bowler The bowler that bowled this over.
  * @property ballsBowled The number of balls bowled so far in the over.
  * @property ballLimit The maximum number of balls to be bowled in the over unless an event occurs
  *  to increase that number during the over.
  * @constructor Creates an over and sets the currentBall and ballLimit
  */
 class Over(
-    var bowlerIndex: Int = 0,
+    var bowler: Bowler? = null,
     var ballsBowled: Int = 0,
     var ballLimit: Int = 6): Serializable {
 

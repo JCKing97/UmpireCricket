@@ -69,12 +69,7 @@ class BowlerActivity : AppCompatActivity() {
             bowlerNameText.setLayoutParams(bowlerNameTextLayout)
             val bowlerSelectButton = Button(applicationContext)
             bowlerSelectButton.text = "\u27a4"
-            if (table.childCount == innings.overs.last().bowlerIndex) {
-                bowlerSelectButton.setAlpha(.5f);
-                bowlerSelectButton.setClickable(false);
-            } else {
-                bowlerSelectButton.setOnClickListener { selectBowler(newBowler) }
-            }
+            bowlerSelectButton.setOnClickListener { selectBowler(newBowler) }
             newRow.addView(bowlerNameText)
             newRow.addView(bowlerSelectButton)
             table.addView(newRow)
@@ -82,10 +77,10 @@ class BowlerActivity : AppCompatActivity() {
     }
 
     private fun selectBowler(bowler: Bowler) {
+        innings.getCurrentOver().bowler = bowler
         val data = intent.apply {
             putExtra("innings", innings)
             putExtra("events", events)
-            putExtra("bowler", bowler)
         }
         setResult(RESULT_OK, data)
         finish()

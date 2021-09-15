@@ -14,6 +14,15 @@ class Bowler(
         const val nameKey = "name"
         const val oversBowledKey = "oversBowled"
 
+        fun findBowlerFromJson(innings: Innings, bowlerToFind: Bowler): Bowler? {
+            for (bowler in innings.bowlers) {
+                if (bowlerToFind.id == bowler.id) {
+                    return bowler
+                }
+            }
+            return null
+        }
+
         /**
          * Create a Bowler from a JSONObject.
          *
@@ -22,14 +31,11 @@ class Bowler(
          * @throws JSONException If the json is not valid for the Event
          */
         @Throws(JSONException::class)
-        fun findBowlerFromJSON(innings: Innings, json: JSONObject): Bowler? {
-            val bowlerToFindID = json.getInt(idKey)
-            for (bowler in innings.bowlers) {
-                if (bowlerToFindID == bowler.id) {
-                    return bowler
-                }
-            }
-            return null
+        fun fromJson(json: JSONObject): Bowler {
+            val id = json.getInt(idKey)
+            val name = json.getString(nameKey)
+            val oversBowled = json.getInt(oversBowledKey)
+            return Bowler(id, name, oversBowled)
         }
     }
 
@@ -52,12 +58,16 @@ class Bowler(
      * @throws JSONException If fails to create the json object
      */
     @Throws(JSONException::class)
-    open fun toJson(): JSONObject {
+    fun toJson(): JSONObject {
         val jsonObject = JSONObject()
         jsonObject.put(idKey, id)
         jsonObject.put(nameKey, name)
         jsonObject.put(oversBowledKey, oversBowled)
         return jsonObject
+    }
+
+    override fun hashCode(): Int {
+        return id
     }
 
 }
