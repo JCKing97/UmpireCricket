@@ -13,7 +13,7 @@ import java.util.*
  * @property eventStack A stack of all the events e.g. balls and overs bowled that have happened
  */
 class Innings constructor(
-    var bowlers: ArrayList<String> = ArrayList(),
+    var bowlers: ArrayList<Bowler> = ArrayList(),
     private var oversBowled: Int = 0,
     val overs: MutableList<Over> = mutableListOf(Over()),
     private val eventStack: LinkedList<Event> = LinkedList<Event>()
@@ -49,6 +49,14 @@ class Innings constructor(
      */
     fun getCurrentOver(): Over {
         return overs[oversBowled]
+    }
+
+    fun newBowler(bowler: Bowler) {
+        bowlers.add(bowler)
+    }
+
+    fun undoAddBowler(bowler: Bowler) {
+        bowlers.remove(bowler)
     }
 
 }

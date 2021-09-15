@@ -67,9 +67,6 @@ class InningsActivity : AppCompatActivity() {
         action()
         updateDisplayText()
         inningsFileWriter.writeEvents(events)
-//        if (overEnded) {
-//            selectBowler(innings)
-//        }
     }
 
     /**
@@ -100,9 +97,8 @@ class InningsActivity : AppCompatActivity() {
      */
     private fun selectBowler(innings: Innings) {
         val intent = Intent(this, BowlerActivity::class.java)
-        intent.putExtra("bowlers", innings.bowlers)
-        intent.putExtra("lastOverBowler", innings.overs.last().bowlerIndex)
-        intent.putExtra("newOverBowler", 2)
+        intent.putExtra("innings", innings)
+        intent.putExtra("events", events)
         startActivityForResult(intent, 1)
     }
 

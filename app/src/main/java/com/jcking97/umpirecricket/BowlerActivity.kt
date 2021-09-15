@@ -17,49 +17,57 @@ import android.text.InputFilter.LengthFilter
 class BowlerActivity : AppCompatActivity() {
 
     private lateinit var table: TableLayout
-    private lateinit var bowlers: ArrayList<String>
-    private var lastOverBowler: Int = 0
+    private lateinit var innings: Innings
+    private lateinit var events: Events
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bowler)
 
-        bowlers = intent.getSerializableExtra("bowlers") as ArrayList<String>
-        lastOverBowler = intent.getSerializableExtra("lastOverBowler") as Int
+        innings = intent.getSerializableExtra("innings") as Innings
+        events = intent.getSerializableExtra("events") as Events
 
         table = findViewById<TableLayout>(R.id.bowlerTable)
 
-        initialiseTableRowNames(bowlers)
+        initialiseTableRowNames(innings.bowlers)
 
         val extraBallButton = findViewById<Button>(R.id.newBowlerButton)
         extraBallButton.setOnClickListener{ newBowler() }
     }
 
-    private fun initialiseTableRowNames(bowlers: ArrayList<String>) {
+    private fun initialiseTableRowNames(bowlers: ArrayList<Bowler>) {
         for (bowler in bowlers) {
             newBowler(bowler)
         }
     }
 
-    private fun newBowler(bowler: String? = null) {
-        if (bowlers.size <= 11) {
-            var bowlerName = "Bowler ${table.childCount}"
+    private fun createNewBowler(): Bowler {
+        val event = NewBowlerEvent(innings)
+        events.executeEvent(event)
+        return event.bowler
+    }
+
+    private fun newBowler(bowler: Bowler? = null) {
+        if (innings.bowlers.size <= 11) {
+            val newBowler: Bowler
             if (bowler != null) {
-                bowlerName = bowler
+                newBowler = bowler
+            } else {
+                newBowler = createNewBowler()
             }
             val newRow = TableRow(applicationContext)
             newRow.setLayoutParams(TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT))
             val bowlerNameText = EditText(applicationContext)
             bowlerNameText.setFilters(arrayOf<InputFilter>(LengthFilter(30)))
-            bowlerNameText.setText(bowlerName)
+            bowlerNameText.setText(newBowler.name)
             bowlerNameText.setSingleLine()
             val bowlerNameTextLayout = TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT)
             bowlerNameTextLayout.span = 80
             bowlerNameText.setLayoutParams(bowlerNameTextLayout)
             val bowlerSelectButton = Button(applicationContext)
             bowlerSelectButton.text = "\u27a4"
-            if (table.childCount == lastOverBowler) {
+            if (table.childCount == innings.overs.last().bowlerIndex) {
                 bowlerSelectButton.setAlpha(.5f);
                 bowlerSelectButton.setClickable(false);
             } else {
@@ -68,7 +76,6 @@ class BowlerActivity : AppCompatActivity() {
             newRow.addView(bowlerNameText)
             newRow.addView(bowlerSelectButton)
             table.addView(newRow)
-            bowlers.add(bowlerName)
         }
     }
 

@@ -102,3 +102,69 @@ class EndOverEvent(innings: Innings, causedByPreviousEvent: Boolean): Event(inni
     }
 
 }
+
+/**
+ * An event where a new bowler has been created.
+ *
+ * @param innings The innings where this over has ended.
+ */
+class NewBowlerEvent(innings: Innings): Event(innings) {
+
+    override val eventType = EventType.NEW_BOWLER.toString()
+    lateinit var bowler: Bowler
+
+    /**
+     * Add the new bowler to the innings.
+     *
+     * @return null as this event never causes another.
+     */
+    override fun doEvent(): Event? {
+        bowler = Bowler()
+        innings.newBowler(bowler)
+        return null
+    }
+
+    /**
+     * Undo adding the new bowler to the innings.
+     *
+     * @return false as this event is never caused by another.
+     */
+    override fun doEventInverse(): Boolean {
+        innings.undoAddBowler(bowler)
+        return false
+    }
+
+}
+
+///**
+// * An event where a new bowler has been created.
+// *
+// * @param innings The innings where this over has ended.
+// */
+//class ChangeBowlerNameEvent(innings: Innings): Event(innings) {
+//
+//    override val eventType = EventType.CHANGE_BOWLER_NAME.toString()
+//    lateinit var bowler: Bowler
+//
+//    /**
+//     * Add the new bowler to the innings.
+//     *
+//     * @return null as this event never causes another.
+//     */
+//    override fun doEvent(): Event? {
+//        bowler = Bowler()
+//        innings.newBowler(bowler)
+//        return null
+//    }
+//
+//    /**
+//     * Undo adding the new bowler to the innings.
+//     *
+//     * @return false as this event is never caused by another.
+//     */
+//    override fun doEventInverse(): Boolean {
+//        innings.undoAddBowler(bowler)
+//        return false
+//    }
+//
+//}

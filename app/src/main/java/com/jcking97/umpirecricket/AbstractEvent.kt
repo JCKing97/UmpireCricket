@@ -49,6 +49,7 @@ abstract class Event(val innings: Innings, val causedByPreviousEvent: Boolean = 
                     EventType.BALL_BOWLED -> BallBowledEvent(innings)
                     EventType.EXTRA_BALL -> ExtraBallEvent(innings)
                     EventType.OVER_BOWLED -> EndOverEvent(innings, json.getBoolean(causedByPreviousEventKey))
+                    EventType.NEW_BOWLER -> NewBowlerEvent(innings)
                 }
             } catch (e: IllegalArgumentException) {
                 throw JSONException(

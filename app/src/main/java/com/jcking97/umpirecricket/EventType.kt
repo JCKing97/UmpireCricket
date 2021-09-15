@@ -6,5 +6,7 @@ package com.jcking97.umpirecricket
 enum class EventType {
     BALL_BOWLED,
     EXTRA_BALL,
-    OVER_BOWLED
+    OVER_BOWLED,
+    NEW_BOWLER,
+    //CHANGE_BOWLER_NAME
 }
