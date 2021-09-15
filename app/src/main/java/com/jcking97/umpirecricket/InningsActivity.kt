@@ -1,5 +1,6 @@
 package com.jcking97.umpirecricket
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 // import android.content.Intent
 import android.os.Bundle
@@ -62,12 +63,14 @@ class InningsActivity : AppCompatActivity() {
      * @param action An method that represents the action taking place.
      */
     private fun inningsAction(action: () -> Unit) {
+        var oversSoFar = innings.getOversBowled()
         action()
+        var newOversSoFar = innings.getOversBowled()
         updateDisplayText()
         inningsFileWriter.writeEvents(events)
-//        if (overEnded) {
-//            selectBowler(innings)
-//        }
+        if (newOversSoFar > oversSoFar) {
+            selectBowler(innings)
+        }
     }
 
     /**
@@ -81,16 +84,13 @@ class InningsActivity : AppCompatActivity() {
         overCountText.text = "Overs: ${innings.getOversBowled()}"
     }
 
-//    /**
-//     * Allow the user to select the next over's bowler.
-//     */
-//    private fun selectBowler(innings: Innings) {
-//        val intent = Intent(this, BowlerActivity::class.java)
-//        intent.putExtra("bowlers", innings.bowlers)
-//        intent.putExtra("lastOverBowler", innings.overs.last().bowlerIndex)
-//        intent.putExtra("newOverBowler", 2)
-//        startActivity(intent)
-//    }
+    /**
+     * Allow the user to select the next over's bowler.
+     */
+    private fun selectBowler(innings: Innings) {
+        val intent = Intent(this, BowlerActivity::class.java)
+        startActivity(intent)
+    }
 
     /**
      * Execute a ball bowled action.
